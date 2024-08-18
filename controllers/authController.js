@@ -13,7 +13,10 @@ exports.register = async (req, res) => {
   try {
     await user.save();
 
-    return res.json({ message: "success user regiseter" });
+    return res.json({
+      id,
+      nickname,
+    });
   } catch (error) {
     console.error("Error creating user:", error);
   }
@@ -21,6 +24,7 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { id, password } = req.body;
+
   try {
     const user = await User.findOne({ id });
 
@@ -43,7 +47,10 @@ exports.login = async (req, res) => {
       maxAge: 1000 * 60 * 60 * 24,
     });
 
-    res.json({ message: "Login successful" });
+    res.json({
+      id: user.id,
+      nickname: user.nickname,
+    });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Server error" });
