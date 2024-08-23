@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 
 const cors = require("cors");
 
-const usersRouter = require("./routes/users");
+const userRouter = require("./routes/user");
 const authRouter = require("./routes/auth");
 
 mongoose
@@ -20,6 +20,7 @@ const app = express();
 
 app.use(
   cors({
+    origin: "http://localhost:5173",
     credentials: true,
   })
 );
@@ -28,7 +29,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use("/users", usersRouter);
+app.use("/user", userRouter);
 app.use("/auth", authRouter);
 
 app.use(function (req, res, next) {

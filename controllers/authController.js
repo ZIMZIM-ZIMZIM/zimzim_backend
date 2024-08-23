@@ -44,12 +44,15 @@ exports.login = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: "Strict",
+      // secure: true,
       maxAge: 1000 * 60 * 60 * 24,
     });
 
     res.json({
-      id: user.id,
-      nickname: user.nickname,
+      data: {
+        id: user.id,
+        nickname: user.nickname,
+      },
     });
   } catch (error) {
     console.error("Login error:", error);
