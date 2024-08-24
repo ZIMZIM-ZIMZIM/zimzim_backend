@@ -9,7 +9,12 @@ router.get("/", function (req, res, next) {
 });
 
 router.get("/info", authMiddleware, function (req, res, next) {
-  res.json({ message: "user find success", user: req.user });
+  res.json({
+    message: "user find success",
+    data: {
+      user: req.user,
+    },
+  });
 });
 
 router.get("/exercise", authMiddleware, userController.getExercise);
