@@ -10,9 +10,7 @@ router.get("/", function (req, res, next) {
 router.get("/info", authMiddleware, function (req, res, next) {
   res.json({
     message: "user find success",
-    data: {
-      user: req.user,
-    },
+    data: req.user,
   });
 });
 

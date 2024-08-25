@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
+const User = require("../schema/User");
 
-const authMiddleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
   const token = req.cookies.token;
 
   if (!token) {
@@ -9,7 +10,9 @@ const authMiddleware = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    req.user = decoded;
+
+    const user = await User.findOne({ _id: decoded.id });
+    req.user = user;
 
     next();
   } catch (error) {
