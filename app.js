@@ -8,7 +8,8 @@ const mongoose = require("mongoose");
 
 const cors = require("cors");
 
-const usersRouter = require("./routes/users");
+const exerciseRouter = require("./routes/exercise");
+const userRouter = require("./routes/user");
 const authRouter = require("./routes/auth");
 
 mongoose
@@ -20,6 +21,7 @@ const app = express();
 
 app.use(
   cors({
+    origin: process.env.FRONT_URL,
     credentials: true,
   })
 );
@@ -28,7 +30,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use("/users", usersRouter);
+app.use("/exercise", exerciseRouter);
+app.use("/user", userRouter);
 app.use("/auth", authRouter);
 
 app.use(function (req, res, next) {

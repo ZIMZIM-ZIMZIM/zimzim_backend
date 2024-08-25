@@ -41,15 +41,31 @@ exports.login = async (req, res) => {
       expiresIn: "1h",
     });
 
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_REFRESH_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
+
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: "Strict",
       maxAge: 1000 * 60 * 60 * 24,
     });
 
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "Strict",
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
+
     res.json({
-      id: user.id,
-      nickname: user.nickname,
+      data: {
+        id: user.id,
+        nickname: user.nickname,
+      },
     });
   } catch (error) {
     console.error("Login error:", error);
