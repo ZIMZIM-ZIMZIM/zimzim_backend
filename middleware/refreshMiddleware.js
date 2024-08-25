@@ -13,6 +13,7 @@ const refreshMiddleware = (req, res) => {
     const newToken = jwt.sign({ id: decoded.id }, process.env.JWT_SECRET_KEY, {
       expiresIn: "1h",
     });
+
     res.cookie("token", newToken, {
       httpOnly: true,
       sameSite: "Strict",

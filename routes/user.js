@@ -1,6 +1,5 @@
 const express = require("express");
 const authMiddleware = require("../middleware/authMiddleware");
-const userController = require("../controllers/userController");
 
 const router = express.Router();
 
@@ -16,8 +15,5 @@ router.get("/info", authMiddleware, function (req, res, next) {
     },
   });
 });
-
-router.get("/exercise", authMiddleware, userController.getExercise);
-router.post("/exercise", authMiddleware, userController.postExercise);
 
 module.exports = router;

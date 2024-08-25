@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 
 const cors = require("cors");
 
+const exerciseRouter = require("./routes/exercise");
 const userRouter = require("./routes/user");
 const authRouter = require("./routes/auth");
 
@@ -20,7 +21,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONT_URL,
     credentials: true,
   })
 );
@@ -29,6 +30,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+app.use("/exercise", exerciseRouter);
 app.use("/user", userRouter);
 app.use("/auth", authRouter);
 

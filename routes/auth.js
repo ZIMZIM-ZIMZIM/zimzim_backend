@@ -1,7 +1,8 @@
 const express = require("express");
-const router = express.Router();
 const authController = require("../controllers/authController");
 const refreshMiddleware = require("../middleware/refreshMiddleware");
+
+const router = express.Router();
 
 router.use("/", function (req, res, next) {
   console.log(`Request received at ${req.originalUrl}`);
