@@ -1,21 +1,32 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
+const detailSchema = new mongoose.Schema({
+  duration: {
+    type: String,
+    required: true,
+  },
+  type: {
+    type: String,
+    required: true,
+  },
+  force: {
+    type: String,
+    required: true,
+  },
+});
+
 const exerciseSchema = new mongoose.Schema({
   date: {
     type: Date,
     required: true,
   },
-  duration: {
-    type: Number,
+  totalDuration: {
+    type: String,
     required: true,
   },
-  type: {
-    type: Number,
-    required: true,
-  },
-  force: {
-    type: Number,
+  detail: {
+    type: [detailSchema],
     required: true,
   },
   user: {
