@@ -3,7 +3,7 @@ const User = require("../schema/User");
 
 exports.postExercise = async (req, res) => {
   try {
-    const { userId, date, duration, type, force } = req.body;
+    const { userId, date, totalDuration, detail } = req.body;
 
     const user = await User.find({ id: userId });
 
@@ -13,9 +13,8 @@ exports.postExercise = async (req, res) => {
 
     const exercise = new Exercise({
       date,
-      duration,
-      type,
-      force,
+      totalDuration,
+      detail,
       user: user[0]._id,
     });
 
@@ -39,12 +38,6 @@ exports.getExercise = async (req, res) => {
         $lte: new Date(endDate),
       },
     });
-
-    if (exercises.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No exercises found for this date range" });
-    }
 
     res.json({ data: exercises });
   } catch (error) {
