@@ -13,10 +13,7 @@ exports.register = async (req, res) => {
   try {
     await user.save();
 
-    return res.json({
-      id,
-      nickname,
-    });
+    return res.json({ message: "success" });
   } catch (error) {
     console.error("Error creating user:", error);
   }
