@@ -3,7 +3,7 @@ const User = require("../schema/User");
 
 exports.postExercise = async (req, res) => {
   try {
-    const { userId, date, totalDuration, detail } = req.body;
+    const { userId, date, totalDuration, detail, isPT } = req.body;
 
     const user = await User.findOne({ id: userId });
 
@@ -11,14 +11,24 @@ exports.postExercise = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const exercise = new Exercise({
-      date,
-      totalDuration,
-      detail,
-      user: user._id,
-    });
+    let exercise = await Exercise.findOne({ user: user._id, date });
 
-    await exercise.save();
+    if (exercise) {
+      exercise.totalDuration =
+        parseFloat(totalDuration) + parseFloat(exercise.totalDuration);
+      exercise.detail.push(...detail);
+      await exercise.save();
+    } else {
+      exercise = new Exercise({
+        date,
+        totalDuration,
+        detail,
+        user: user._id,
+        isPT,
+      });
+      await exercise.save();
+    }
+
     res.status(201).json(exercise);
   } catch (error) {
     res.status(500).json({ message: "Error adding exercise", error });
@@ -48,7 +58,6 @@ exports.getExercise = async (req, res) => {
     }
 
     const exercises = await Exercise.find(query).sort({ date: -1 });
-    console.log(exercises, "kkk");
     res.json({ data: exercises });
   } catch (error) {
     res.status(500).json({ message: "Error fetching exercises", error });
@@ -56,29 +65,36 @@ exports.getExercise = async (req, res) => {
 };
 
 exports.getExerciseList = async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-
-  const id = req.query.id;
-
   try {
+    const id = req.query.id;
+
     const user = await User.findOne({ id: id });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     const totalItems = await Exercise.countDocuments({ user: user._id });
-    const totalPages = Math.ceil(totalItems / limit);
+    const totalPages = Math.ceil(totalItems / 10);
 
-    const currentPage = page > totalPages ? totalPages : page;
-    const skipItems = (currentPage - 1) * limit;
+    const page = Math.max(
+      0,
+      Math.min(parseInt(req.query.page, 10) || 0, totalPages - 1)
+    );
+    const limit = 10;
+    const skipValue = page * limit;
 
     const items = await Exercise.find({ user: user._id })
       .sort({ date: -1 })
       .limit(limit)
-      .skip(skipItems);
+      .skip(skipValue);
+
     res.json({
-      data: { totalItems, totalPages, currentPage, items },
+      data: {
+        totalItems,
+        totalPages,
+        currentPage: page,
+        items,
+      },
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -119,5 +135,15 @@ exports.deleteMultipleExerciseDetails = async (req, res) => {
     res.status(200).json({ message: "Details deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error deleting details", error });
+  }
+};
+
+exports.deleteAllExercises = async (req, res) => {
+  try {
+    await Exercise.deleteMany({});
+
+    res.status(200).json({ message: "All exercises have been deleted" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting exercises", error });
   }
 };

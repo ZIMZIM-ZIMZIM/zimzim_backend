@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get("/", authMiddleware, exerciseController.getExercise);
 router.post("/", authMiddleware, exerciseController.postExercise);
+router.delete("/", exerciseController.deleteAllExercises);
 router.get("/list", authMiddleware, exerciseController.getExerciseList);
 router.post("/details", exerciseController.deleteMultipleExerciseDetails);
 

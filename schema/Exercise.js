@@ -25,6 +25,10 @@ const exerciseSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isPT: {
+    type: String,
+    required: true,
+  },
   detail: {
     type: [detailSchema],
     required: true,
