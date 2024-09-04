@@ -101,6 +101,25 @@ exports.getExerciseList = async (req, res) => {
   }
 };
 
+exports.getExerciseDetail = async (req, res) => {
+  try {
+    const exerciseId = req.params.id;
+    console.log(exerciseId);
+
+    const exercise = await Exercise.findOne({ "detail._id": exerciseId });
+
+    if (!exercise) {
+      return res.status(404).json({ message: "Exercise not found" });
+    }
+
+    res.json({
+      data: exercise,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 exports.deleteMultipleExerciseDetails = async (req, res) => {
   try {
     const { exerciseDetails } = req.body;
@@ -145,5 +164,48 @@ exports.deleteAllExercises = async (req, res) => {
     res.status(200).json({ message: "All exercises have been deleted" });
   } catch (error) {
     res.status(500).json({ message: "Error deleting exercises", error });
+  }
+};
+
+exports.updateExerciseDetail = async (req, res) => {
+  try {
+    const exerciseId = req.params.id;
+    const { type, duration, force, isPT } = req.body;
+
+    const exercise = await Exercise.findOne({ "detail._id": exerciseId });
+
+    if (!exercise) {
+      return res.status(404).json({ message: "Exercise not found" });
+    }
+
+    const detailIndex = exercise.detail.findIndex((d) => d._id == exerciseId);
+    if (detailIndex === -1) {
+      return res.status(404).json({ message: "Exercise detail not found" });
+    }
+
+    const oldDuration = exercise.detail[detailIndex].duration;
+
+    exercise.totalDuration =
+      Number(exercise.totalDuration) - Number(oldDuration);
+
+    if (duration) {
+      exercise.totalDuration = (
+        Number(exercise.totalDuration) + Number(duration)
+      ).toString();
+      exercise.detail[detailIndex].duration = duration;
+    }
+
+    if (isPT !== undefined) exercise.isPT = isPT;
+    if (type) exercise.detail[detailIndex].type = type;
+    if (force) exercise.detail[detailIndex].force = force;
+
+    await exercise.save();
+
+    res.json({
+      message: "Exercise detail updated successfully",
+      data: exercise,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
