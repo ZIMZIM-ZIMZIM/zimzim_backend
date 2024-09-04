@@ -13,10 +13,7 @@ exports.register = async (req, res) => {
   try {
     await user.save();
 
-    return res.json({
-      id,
-      nickname,
-    });
+    return res.json({ message: "success" });
   } catch (error) {
     console.error("Error creating user:", error);
   }
@@ -71,4 +68,14 @@ exports.login = async (req, res) => {
     console.error("Login error:", error);
     res.status(500).json({ message: "Server error" });
   }
+};
+
+exports.logout = async (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+  });
+
+  res.json({ message: "Logout successful" });
 };
