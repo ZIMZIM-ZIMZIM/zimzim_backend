@@ -7,8 +7,12 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const mongoose = require("mongoose");
 
-const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
+const cors = require("cors");
+
+const exerciseRouter = require("./routes/exercise");
+const userRouter = require("./routes/user");
+const authRouter = require("./routes/auth");
+const waterRouter = require("./routes/water");
 
 mongoose
   .connect(process.env.MONGO_DB_URI, {})
@@ -17,13 +21,21 @@ mongoose
 
 const app = express();
 
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use("/exercise", exerciseRouter);
+app.use("/user", userRouter);
+app.use("/auth", authRouter);
+app.use("/water", waterRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));
