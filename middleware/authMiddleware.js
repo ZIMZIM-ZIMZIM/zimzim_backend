@@ -2,7 +2,14 @@ const jwt = require("jsonwebtoken");
 const User = require("../schema/User");
 
 const authMiddleware = async (req, res, next) => {
-  const token = req.cookies.token;
+  let token = "";
+
+  if (req.cookies.token) {
+    token = req.cookies.token;
+  }
+  if (req.headers.authorization?.split(" ")[1]) {
+    token = req.headers.authorization?.split(" ")[1];
+  }
 
   if (!token) {
     return res.status(401).json({ message: "No token, authorization denied" });

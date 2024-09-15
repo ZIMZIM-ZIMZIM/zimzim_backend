@@ -11,6 +11,7 @@ const cors = require("cors");
 const exerciseRouter = require("./routes/exercise");
 const userRouter = require("./routes/user");
 const authRouter = require("./routes/auth");
+const waterRouter = require("./routes/water");
 
 mongoose
   .connect(process.env.MONGO_DB_URI, {})
@@ -33,6 +34,7 @@ app.use(cookieParser());
 app.use("/exercise", exerciseRouter);
 app.use("/user", userRouter);
 app.use("/auth", authRouter);
+app.use("/water", waterRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));

@@ -74,13 +74,13 @@ exports.getExerciseList = async (req, res) => {
     }
 
     const totalItems = await Exercise.countDocuments({ user: user._id });
-    const totalPages = Math.ceil(totalItems / 10);
+    const totalPages = Math.ceil(totalItems / 5);
 
     const page = Math.max(
       0,
-      Math.min(parseInt(req.query.page, 10) || 0, totalPages - 1)
+      Math.min(parseInt(req.query.page, 5) || 0, totalPages - 1)
     );
-    const limit = 10;
+    const limit = 5;
     const skipValue = page * limit;
 
     const items = await Exercise.find({ user: user._id })
@@ -104,7 +104,6 @@ exports.getExerciseList = async (req, res) => {
 exports.getExerciseDetail = async (req, res) => {
   try {
     const exerciseId = req.params.id;
-    console.log(exerciseId);
 
     const exercise = await Exercise.findOne({ "detail._id": exerciseId });
 
@@ -143,7 +142,6 @@ exports.deleteMultipleExerciseDetails = async (req, res) => {
         (detail) => !detailIds.includes(detail._id.toString())
       );
 
-      console.log(exercise, "kkk");
       if (exercise.detail.length === 0) {
         await Exercise.findByIdAndDelete(exerciseId);
       } else {
