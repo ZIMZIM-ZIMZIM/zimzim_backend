@@ -1,33 +1,34 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
-const waterSchema = new mongoose.Schema({
-  date: {
-    type: Date,
+const userSchema = new mongoose.Schema({
+  id: {
+    type: String,
     required: true,
+    unique: true,
   },
-  amount: {
+  password: {
     type: String,
     required: true,
   },
-  id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
+  nickname: {
+    type: String,
+    required: false,
+    unique: true,
   },
 });
 
-waterSchema.pre("save", async function (next) {
+userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 
-waterSchema.methods.matchPassword = async function (enteredPassword) {
+userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-const Water = mongoose.model("water", waterSchema);
+const User = mongoose.model("User", userSchema);
 
-module.exports = Water;
+module.exports = User;
