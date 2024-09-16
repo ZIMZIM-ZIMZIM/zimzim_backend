@@ -1,10 +1,24 @@
 require("dotenv").config();
-
+const fs = require("fs");
+const path = require("path"); 
 const createError = require("http-errors");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const mongoose = require("mongoose");
+const https = require("https"); 
+
+
+const privateKey = fs.readFileSync(
+  path.join(__dirname, "localhost-key.pem"),
+  "utf8"
+);
+const certificate = fs.readFileSync(
+  path.join(__dirname, "localhost.pem"),
+  "utf8"
+);
+
+const credentials = { key: privateKey, cert: certificate };
 
 const cors = require("cors");
 
@@ -36,9 +50,11 @@ app.use("/user", userRouter);
 app.use("/auth", authRouter);
 app.use("/water", waterRouter);
 
+
 app.use(function (req, res, next) {
   next(createError(404));
 });
+
 
 app.use(function (err, req, res, next) {
   res.locals.message = err.message;
@@ -50,8 +66,10 @@ app.use(function (err, req, res, next) {
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+
+const httpsServer = https.createServer(credentials, app);
+httpsServer.listen(port, () => {
+  console.log(`HTTPS Server is running on https:
 });
 
 module.exports = app;
