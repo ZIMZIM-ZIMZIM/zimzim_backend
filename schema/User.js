@@ -16,6 +16,16 @@ const userSchema = new mongoose.Schema({
     required: false,
     unique: true,
   },
+  height: {
+    type: String,
+    required: false,
+    unique: true,
+  },
+  weight: {
+    type: String,
+    required: false,
+    unique: true,
+  },
 });
 
 userSchema.pre("save", async function (next) {
