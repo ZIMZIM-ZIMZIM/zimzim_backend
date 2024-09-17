@@ -1,5 +1,6 @@
 const express = require("express");
 const authMiddleware = require("../middleware/authMiddleware");
+const userController = require("../controllers/userController");
 
 const router = express.Router();
 
@@ -13,5 +14,7 @@ router.get("/info", authMiddleware, function (req, res, next) {
     data: req.user,
   });
 });
+
+router.post("/info", authMiddleware, userController.updateUserInfo);
 
 module.exports = router;
